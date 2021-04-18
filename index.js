@@ -15,7 +15,7 @@ const buttonSave = document.querySelector(".popup__button_save");
 const placeForm = document.querySelector(".popup__form-place");
 const buttonAdd = document.querySelector(".popup__button_add");
 
-const errorMessage = {
+const errorMessages = {
   length: "Должно быть от 2 до 30 символов",
   required: "Это обязательное поле",
 };
@@ -113,18 +113,13 @@ root.addEventListener("click", (e) => {
   }
 });
 
-// const buttonValidate = (button, name, about) => {
-//   (name.value.length && about.value.length) === 0
-//     ? button.setAttribute("disabled", "true")
-//     : button.removeAttribute("disabled");
-// };
-const buttonValidate = (button, state) => {
+const setSubmitButtonState = (button, state) => {
   state
-    ? button.setAttribute("disabled", "true")
-    : button.removeAttribute("disabled");
+    ? button.removeAttribute("disabled")
+    : button.setAttribute("disabled", "true");
 };
 
-const validate = (element, error) => {
+const checkInputValidity = (element, error) => {
   let errorMessage = document.querySelector(`#error-${element.id}`);
   errorMessage.textContent = "";
   if (!element.checkValidity()) {
@@ -140,20 +135,16 @@ const validate = (element, error) => {
 };
 
 const sendForm = (form, error, button) => {
-  let isValidForm = true;
   const inputs = [...form.elements];
-
+  let isValidate = true;
   inputs.forEach((el) => {
     if (el.id !== "submit") {
-      if (!validate(el, error)) {
-        isValidForm = false;
-        buttonValidate(button, isValidForm);
-      } else {
-        isValidForm = true;
-        buttonValidate(button, isValidForm);
+      if (!checkInputValidity(el, error)) {
+        isValidate = false;
       }
     }
   });
+  setSubmitButtonState(button, isValidate);
 };
 
 document.querySelector(".popup__form").addEventListener("submit", (e) => {
@@ -169,8 +160,8 @@ profileForm.addEventListener("submit", (e) => {
 });
 
 profileForm.addEventListener("input", (e) => {
-  sendForm(profileForm, errorMessage, buttonSave);
-  buttonValidate(buttonSave, false);
+  sendForm(profileForm, errorMessages, buttonSave);
+  // buttonValidate(buttonSave, false);
 });
 
 placeForm.addEventListener("input", (e) => {
